@@ -168,7 +168,7 @@ curl http://localhost:8080/api/health
 The authoritative Kubernetes migration path for the workspace is now:
 
 - [docs/local/12-phase7-k8s-dev.md](docs/local/12-phase7-k8s-dev.md)
-  Kubernetes Phase 7 operator path with `./scripts/k8s-dev-deploy.sh`, verification, and teardown workflow.
+  Kubernetes Phase 7 operator path with state-preserving lifecycle controls and verification workflow.
 
 That path introduces the owned production-minded Kubernetes shape for MemFlip using:
 
@@ -183,6 +183,31 @@ Use:
 - `k8s/`
 
 Treat the older manifest set in `k8s-legacy-lab/` as learning-path archive material, not the current deployment standard.
+
+### Kubernetes Lifecycle Controls
+
+Use the repo-local lifecycle scripts for day-to-day Kubernetes operations:
+
+```bash
+./scripts/k8s-start.sh
+./scripts/k8s-stop.sh
+./scripts/k8s-reset.sh --help
+./scripts/k8s-dev-verify.sh
+```
+
+What they mean:
+
+- `k8s-start.sh`
+  - deploys MemFlip when `memflip-dev` does not exist yet
+  - resumes preserved workloads when the namespace already exists
+- `k8s-stop.sh`
+  - safely pauses MemFlip
+  - scales the backend, frontend, Postgres, and Redis down without deleting the namespace or PVCs
+- `k8s-reset.sh`
+  - destructive reset
+  - deletes `memflip-dev` and all application data in that namespace
+
+Use `start` and `stop` for normal operations. Use `reset` only when you intentionally want a full rebuild of the MemFlip environment.
 
 ---
 

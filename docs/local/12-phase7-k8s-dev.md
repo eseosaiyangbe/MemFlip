@@ -124,10 +124,17 @@ Recommended operator path:
 
 ```bash
 cd MemFlip
-./scripts/k8s-dev-deploy.sh
+./scripts/k8s-start.sh
 ```
 
-That deploy script now bootstraps the shared Vault and External Secrets platform automatically unless you pass `--skip-secrets-platform`.
+On first deploy, `k8s-start.sh` falls through to `./scripts/k8s-dev-deploy.sh`.
+
+If `memflip-dev` already exists, `k8s-start.sh` resumes preserved workloads instead:
+
+- scales `memflip-postgres` and `memflip-redis` back up
+- waits for both StatefulSets to become ready
+- scales `memflip-backend` and `memflip-frontend` back up
+- waits for both Deployments to become available
 
 Verification only:
 
@@ -136,11 +143,25 @@ cd MemFlip
 ./scripts/k8s-dev-verify.sh
 ```
 
-Tear down the dev slice:
+Safely pause the dev slice:
 
 ```bash
 cd MemFlip
-./scripts/k8s-dev-destroy.sh
+./scripts/k8s-stop.sh --wait
+```
+
+This preserves:
+
+- namespace `memflip-dev`
+- PostgreSQL PVC
+- Redis PVC
+- application data
+
+For a destructive reset, run:
+
+```bash
+cd MemFlip
+./scripts/k8s-reset.sh --help
 ```
 
 ## Validate The Manifests
