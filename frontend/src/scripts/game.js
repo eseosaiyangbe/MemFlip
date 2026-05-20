@@ -1,9 +1,8 @@
 /**
- * Humor Memory Game - Frontend JavaScript
+ * MemFlip Fun Game - Frontend JavaScript
  */
 
-console.log('🚀 Script file loaded successfully!');
-// alert('🎯 JavaScript executed successfully!'); // Removed popup
+console.log('Script file loaded successfully.');
 
 // ========================================
 // CONFIGURATION AND CONSTANTS
@@ -30,10 +29,11 @@ function waitForConfig() {
 // Simple API configuration - always use nginx proxy
 let API_BASE = '/api'; // Default fallback
 
-console.log('🎮 Humor Memory Game Frontend Loading...');
-console.log('🔧 Waiting for configuration...');
+console.log('MemFlip Fun Game frontend loading...');
+console.log('Waiting for configuration...');
 const CARD_FLIP_DELAY = 1500;
 const MESSAGE_DISPLAY_TIME = 3000;
+const DEFAULT_USERNAME = 'gameuser';
 
 // ========================================
 // GLOBAL STATE
@@ -59,34 +59,34 @@ let gameState = {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🎮 Humor Memory Game Frontend Loading...');
-  console.log('🔧 DOMContentLoaded event fired');
-  console.log('🔧 Initial window.API_BASE_URL:', window.API_BASE_URL);
-  console.log('🔧 Initial window.CONFIG_READY:', window.CONFIG_READY);
+  console.log('MemFlip Fun Game frontend loading...');
+  console.log('DOMContentLoaded event fired');
+  console.log('Initial window.API_BASE_URL:', window.API_BASE_URL);
+  console.log('Initial window.CONFIG_READY:', window.CONFIG_READY);
   
   // Wait for configuration to be ready
-  console.log('🔧 Waiting for configuration...');
+  console.log('Waiting for configuration...');
   await waitForConfig();
-  console.log('🔧 Configuration wait completed');
+  console.log('Configuration wait completed');
   
   // Now set the API_BASE from configuration
   API_BASE = window.API_BASE_URL;
   
-  console.log('🔧 Configuration loaded successfully');
-  console.log('🔧 Final API_BASE_URL:', window.API_BASE_URL);
-  console.log('🔧 Final API_BASE:', API_BASE);
+  console.log('Configuration loaded successfully');
+  console.log('Final API_BASE_URL:', window.API_BASE_URL);
+  console.log('Final API_BASE:', API_BASE);
 
   // Check API connectivity
   checkAPIConnection()
     .then(() => {
-      console.log('✅ API connection successful, initializing game...');
+      console.log('API connection successful, initializing game...');
       setTimeout(() => {
         hideLoadingScreen();
         initializeGame();
       }, 2000);
     })
     .catch((error) => {
-      console.error('❌ API connection failed:', error);
+      console.error('API connection failed:', error);
       showAPIError();
     });
 });
@@ -104,10 +104,10 @@ async function checkAPIConnection() {
     }
 
     const result = await response.json();
-    console.log('✅ API connection successful:', result.status);
+    console.log('API connection successful:', result.status);
     return true;
   } catch (error) {
-    console.error('❌ API connection failed:', error);
+    console.error('API connection failed:', error);
     throw error;
   }
 }
@@ -117,10 +117,10 @@ function showAPIError() {
   if (loadingScreen) {
     loadingScreen.innerHTML = `
             <div class="loading-content">
-                <div class="error-emoji">🚨</div>
+                <div class="error-emoji">Offline</div>
                 <h2>Cannot Connect to Game Server</h2>
                 <p>The backend API is not responding. Please check if the backend server is running.</p>
-                <button class="btn btn-primary" onclick="location.reload()">🔄 Retry Connection</button>
+                <button class="btn btn-primary" onclick="location.reload()">Retry Connection</button>
                 <div class="error-details">
                     <p>Expected API at: <code>${API_BASE}</code></p>
                     <p>Make sure your backend server is running on port 3001</p>
@@ -137,7 +137,7 @@ function hideLoadingScreen() {
   if (loadingScreen && gameContainer) {
     loadingScreen.style.display = 'none';
     gameContainer.style.display = 'block';
-    console.log('✅ Frontend loaded successfully!');
+    console.log('Frontend loaded successfully.');
   }
 }
 
@@ -145,7 +145,8 @@ function initializeGame() {
   setupEventListeners();
   setupTabNavigation();
   loadLeaderboard();
-  console.log('🎯 Frontend initialized and ready to play!');
+  applyDefaultUsername();
+  console.log('Frontend initialized and ready to play.');
 }
 
 // ========================================
@@ -163,7 +164,7 @@ async function apiRequest(endpoint, options = {}) {
       ...options,
     };
 
-    console.log(`🌐 API Request: ${config.method || 'GET'} ${url}`);
+    console.log(`API request: ${config.method || 'GET'} ${url}`);
 
     const response = await fetch(url, config);
     const data = await response.json();
@@ -172,22 +173,16 @@ async function apiRequest(endpoint, options = {}) {
       throw new Error(data.message || `HTTP ${response.status}`);
     }
 
-    console.log(
-      `✅ API Response: ${endpoint}`,
-      data.success ? 'Success' : 'Info'
-    );
+    console.log(`API response: ${endpoint}`, data.success ? 'Success' : 'Info');
     return data;
   } catch (error) {
-    console.error(`❌ API Error: ${endpoint}`, error);
+    console.error(`API error: ${endpoint}`, error);
 
     // Show user-friendly error message
     if (error.message.includes('Failed to fetch')) {
-      showNotification(
-        'Connection error! Is the backend server running? 🔌',
-        'error'
-      );
+      showNotification('Connection error. Verify that the backend server is running.', 'error');
     } else {
-      showNotification(error.message || 'API request failed! 😅', 'error');
+      showNotification(error.message || 'API request failed.', 'error');
     }
 
     throw error;
@@ -205,18 +200,12 @@ async function startNewGame() {
 
     // Validate input
     if (!username || username.length < 3) {
-      showNotification(
-        'Username must be at least 3 characters long! 📝',
-        'error'
-      );
+      showNotification('Username must be at least 3 characters long.', 'error');
       return;
     }
 
     if (!/^[a-zA-Z0-9]+$/.test(username)) {
-      showNotification(
-        'Username can only contain letters and numbers! 🔤',
-        'error'
-      );
+      showNotification('Username can only contain letters and numbers.', 'error');
       return;
     }
 
@@ -228,7 +217,7 @@ async function startNewGame() {
     // Disable start button
     const startBtn = document.getElementById('startGameBtn');
     startBtn.disabled = true;
-    startBtn.textContent = '🎮 Starting Game...';
+    startBtn.textContent = 'Starting Game...';
 
     // Create user first
     await apiRequest('/scores/user', {
@@ -269,15 +258,15 @@ async function startNewGame() {
     startGameTimer();
     showGameBoard();
 
-    showNotification(`🎯 Game started! Good luck, ${username}! 🍀`, 'success');
-    console.log('🎮 Game started successfully:', result.game.gameId);
+    showNotification(`Game started. Good luck, ${username}.`, 'success');
+    console.log('Game started successfully:', result.game.gameId);
   } catch (error) {
-    console.error('❌ Error starting game:', error);
+    console.error('Error starting game:', error);
   } finally {
     // Re-enable start button
     const startBtn = document.getElementById('startGameBtn');
     startBtn.disabled = false;
-    startBtn.textContent = '🚀 Start Game!';
+    startBtn.textContent = 'Start Game';
   }
 }
 
@@ -319,8 +308,8 @@ async function checkForMatch() {
       }
     }
   } catch (error) {
-    console.error('❌ Error checking match:', error);
-    handleMatchFailure(card1, card2, { message: 'Connection error! 🔄' });
+    console.error('Error checking match:', error);
+    handleMatchFailure(card1, card2, { message: 'Connection error. Please try the move again.' });
   }
 
   // Clear flipped cards array
@@ -350,10 +339,10 @@ async function completeGame() {
 
     showGameCompleteModal(result.gameResult, result.achievements);
     playSound('complete');
-    console.log('🏆 Game completed successfully!', result.gameResult);
+    console.log('Game completed successfully.', result.gameResult);
   } catch (error) {
-    console.error('❌ Error completing game:', error);
-    showNotification("Game completed but couldn't save score! 😅", 'warning');
+    console.error('Error completing game:', error);
+    showNotification("Game completed, but the score could not be saved.", 'warning');
 
     // Show basic completion modal anyway
     const basicResult = {
@@ -376,20 +365,20 @@ async function loadLeaderboard(fresh = false) {
 
     // Show loading state
     leaderboardContent.innerHTML =
-      '<div class="loading-spinner">📊 Loading leaderboard...</div>';
+      '<div class="loading-spinner loading-spinner-inline">Loading leaderboard...</div>';
 
     const endpoint = fresh ? '/leaderboard/fresh' : '/leaderboard';
     const result = await apiRequest(endpoint);
 
     renderLeaderboard(result.leaderboard, result.metadata);
-    console.log(`🏆 Leaderboard loaded: ${result.leaderboard.length} players`);
+    console.log(`Leaderboard loaded: ${result.leaderboard.length} players`);
   } catch (error) {
-    console.error('❌ Error loading leaderboard:', error);
+    console.error('Error loading leaderboard:', error);
     document.getElementById('leaderboardContent').innerHTML = `
             <div class="error-state">
-                <div class="error-emoji">😅</div>
+                <div class="error-emoji">Unavailable</div>
                 <p>Couldn't load leaderboard right now!</p>
-                <button class="btn btn-primary" onclick="loadLeaderboard(true)">🔄 Try Again</button>
+                <button class="btn btn-primary" onclick="loadLeaderboard(true)">Try Again</button>
             </div>
         `;
   }
@@ -399,9 +388,9 @@ async function loadUserStats() {
   if (!gameState.currentUser?.username) {
     document.getElementById('userStatsContent').innerHTML = `
             <div class="stats-placeholder">
-                <div class="placeholder-emoji">📈</div>
+                <div class="placeholder-emoji">Stats</div>
                 <p>Play a game to see your stats here!</p>
-                <button class="btn btn-primary" onclick="switchTab('game')">🎮 Start Playing</button>
+                <button class="btn btn-primary" onclick="switchTab('game')">Start Playing</button>
             </div>
         `;
     return;
@@ -412,12 +401,12 @@ async function loadUserStats() {
       `/scores/${gameState.currentUser.username}?includeHistory=true`
     );
     renderUserStats(result);
-    console.log(`📊 Stats loaded for ${gameState.currentUser.username}`);
+    console.log(`Stats loaded for ${gameState.currentUser.username}`);
   } catch (error) {
-    console.error('❌ Error loading user stats:', error);
+    console.error('Error loading user stats:', error);
     document.getElementById('userStatsContent').innerHTML = `
             <div class="error-state">
-                <div class="error-emoji">😅</div>
+                <div class="error-emoji">Unavailable</div>
                 <p>Couldn't load your stats right now!</p>
             </div>
         `;
@@ -482,6 +471,13 @@ function setupEventListeners() {
   document.addEventListener('keydown', handleKeyboardShortcuts);
 }
 
+function applyDefaultUsername() {
+  const usernameInput = document.getElementById('usernameInput');
+  if (usernameInput && !usernameInput.value.trim()) {
+    usernameInput.value = DEFAULT_USERNAME;
+  }
+}
+
 function setupTabNavigation() {
   const navButtons = document.querySelectorAll('.nav-btn');
 
@@ -530,23 +526,24 @@ function showNotification(message, type = 'info') {
   // Set content
   messageEl.textContent = message;
 
-  const emojis = {
-    success: '✅',
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️',
+  const labels = {
+    success: 'Success',
+    error: 'Error',
+    warning: 'Notice',
+    info: 'Info',
   };
-  emojiEl.textContent = emojis[type] || emojis.info;
+  emojiEl.textContent = labels[type] || labels.info;
 
   // Show notification
   notification.style.display = 'block';
+  notification.dataset.type = type;
 
   // Auto-hide after 5 seconds
   setTimeout(() => {
     notification.style.display = 'none';
   }, 5000);
 
-  console.log(`📢 Notification: ${message}`);
+  console.log(`Notification: ${message}`);
 }
 
 // ========================================
@@ -590,7 +587,7 @@ function setupGameBoard() {
   });
 
   console.log(
-    `🃏 Created ${gameState.cards.length} cards for ${gameState.difficulty} difficulty`
+    `Created ${gameState.cards.length} cards for ${gameState.difficulty} difficulty`
   );
 }
 
@@ -603,7 +600,13 @@ function createCardElement(card, index) {
   cardEl.tabIndex = 0;
 
   cardEl.innerHTML = `
-        <div class="card-face card-back">🎮</div>
+        <div class="card-face card-back">
+            <div class="card-back-art" aria-hidden="true">
+                <span class="card-back-panel"></span>
+                <span class="card-back-panel"></span>
+                <span class="card-back-core"></span>
+            </div>
+        </div>
         <div class="card-face card-front">${card.emoji}</div>
     `;
 
@@ -663,12 +666,12 @@ function handleMatchSuccess(card1, card2, result) {
   front1.classList.add('matched');
   front2.classList.add('matched');
 
-  showGameMessage(result.message || '🎉 Perfect match!', 'success');
+  showGameMessage(sanitizeUiText(result.message || 'Perfect match.'), 'success');
   playSound('success');
   addCelebrationEffect([card1, card2]);
 
   console.log(
-    `✅ Match found: ${result.match?.card1.emoji} + ${result.match?.card2.emoji}`
+    `Match found: ${result.match?.card1.emoji} + ${result.match?.card2.emoji}`
   );
 }
 
@@ -676,7 +679,7 @@ function handleMatchFailure(card1, card2, result) {
   card1.classList.add('shake');
   card2.classList.add('shake');
 
-  showGameMessage(result.message || '🤔 Not a match! Try again!', 'failure');
+  showGameMessage(sanitizeUiText(result.message || 'Not a match. Try again.'), 'failure');
   playSound('failure');
 
   setTimeout(() => {
@@ -684,14 +687,14 @@ function handleMatchFailure(card1, card2, result) {
     card2.classList.remove('flipped', 'shake');
   }, CARD_FLIP_DELAY);
 
-  console.log(`❌ No match: cards flipped back`);
+  console.log('No match: cards flipped back');
 }
 
 function addCelebrationEffect(cards) {
   cards.forEach((card) => {
     const sparkles = document.createElement('div');
     sparkles.className = 'sparkles';
-    sparkles.innerHTML = '✨';
+    sparkles.innerHTML = '';
     sparkles.style.position = 'absolute';
     sparkles.style.top = '50%';
     sparkles.style.left = '50%';
@@ -719,15 +722,15 @@ function showGameMessage(message, type = 'info') {
 
   textEl.textContent = message;
 
-  const emojis = {
-    success: '🎉',
-    failure: '😅',
-    info: 'ℹ️',
-    warning: '⚠️',
+  const labels = {
+    success: 'Matched',
+    failure: 'Retry',
+    info: 'Status',
+    warning: 'Notice',
   };
-  emojiEl.textContent = emojis[type] || emojis.info;
+  emojiEl.textContent = labels[type] || labels.info;
 
-  messageEl.style.display = 'block';
+  messageEl.style.display = 'grid';
 
   setTimeout(() => {
     messageEl.style.display = 'none';
@@ -763,14 +766,14 @@ function resetToSetup() {
   document.getElementById('gameBoard').style.display = 'none';
   document.getElementById('userSetup').style.display = 'block';
 
-  document.getElementById('usernameInput').value = '';
+  document.getElementById('usernameInput').value = DEFAULT_USERNAME;
   document.getElementById('difficultySelect').value = 'easy';
 
   document.querySelectorAll('.category-option input').forEach((input) => {
     input.checked = false;
   });
 
-  console.log('🔄 Game reset to setup screen');
+  console.log('Game reset to setup screen');
 }
 
 function togglePause() {
@@ -779,23 +782,23 @@ function togglePause() {
   if (gameState.isGameActive) {
     gameState.isGameActive = false;
     clearInterval(gameState.gameTimer);
-    pauseBtn.textContent = '▶️ Resume';
+    pauseBtn.textContent = 'Resume';
 
     document.querySelectorAll('.memory-card').forEach((card) => {
       card.style.pointerEvents = 'none';
     });
 
-    showNotification('⏸️ Game paused', 'info');
+    showNotification('Game paused.', 'info');
   } else {
     gameState.isGameActive = true;
     startGameTimer();
-    pauseBtn.textContent = '⏸️ Pause';
+    pauseBtn.textContent = 'Pause';
 
     document.querySelectorAll('.memory-card').forEach((card) => {
       card.style.pointerEvents = 'auto';
     });
 
-    showNotification('▶️ Game resumed', 'info');
+    showNotification('Game resumed.', 'info');
   }
 }
 
@@ -819,6 +822,19 @@ function formatTime(milliseconds) {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function sanitizeUiText(value) {
+  if (!value) return '';
+
+  try {
+    return String(value)
+      .replace(/[\p{Extended_Pictographic}\p{Emoji_Presentation}\uFE0F]/gu, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  } catch {
+    return String(value).trim();
+  }
 }
 
 function showModal(modalId) {
@@ -850,10 +866,9 @@ function showGameCompleteModal(gameResult, achievements) {
 
   const ratingEl = document.getElementById('performanceRating');
   if (gameResult.performance) {
-    ratingEl.querySelector('.rating-emoji').textContent =
-      gameResult.performance.level === 'Legendary' ? '👑' : '⭐';
+    ratingEl.querySelector('.rating-emoji').textContent = 'Performance';
     ratingEl.querySelector('.rating-text').textContent =
-      gameResult.performance.level;
+      sanitizeUiText(gameResult.performance.level);
   }
 
   const achievementsList = document.getElementById('achievementsList');
@@ -863,10 +878,10 @@ function showGameCompleteModal(gameResult, achievements) {
       .map(
         (achievement) => `
             <div class="achievement-item">
-                <div class="achievement-emoji">${achievement.icon}</div>
+                <div class="achievement-emoji">Unlocked</div>
                 <div class="achievement-details">
-                    <h4>${achievement.title}</h4>
-                    <p>${achievement.description}</p>
+                    <h4>${sanitizeUiText(achievement.title)}</h4>
+                    <p>${sanitizeUiText(achievement.description)}</p>
                 </div>
             </div>
         `
@@ -886,7 +901,7 @@ function renderLeaderboard(players, metadata) {
   if (!players || players.length === 0) {
     container.innerHTML = `
             <div class="empty-state">
-                <div class="placeholder-emoji">🎮</div>
+                <div class="placeholder-emoji">Start</div>
                 <p>No players yet! Be the first to join the leaderboard!</p>
             </div>
         `;
@@ -899,12 +914,12 @@ function renderLeaderboard(players, metadata) {
   table.innerHTML = `
         <thead>
             <tr>
-                <th>🏆 Rank</th>
-                <th>👤 Player</th>
-                <th>🎯 Best Score</th>
-                <th>⏱️ Best Time</th>
-                <th>🎮 Games</th>
-                <th>📊 Avg Score</th>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Best Score</th>
+                <th>Best Time</th>
+                <th>Games</th>
+                <th>Avg Score</th>
             </tr>
         </thead>
         <tbody>
@@ -914,12 +929,12 @@ function renderLeaderboard(players, metadata) {
                 <tr class="${player.isCurrentUser ? 'current-user' : ''}">
                     <td>
                         <span class="rank-badge ${getRankClass(player.rank)}">
-                            ${player.badge.emoji} #${player.rank}
+                            Rank #${player.rank}
                         </span>
                     </td>
                     <td>
                         <strong>${player.displayName}</strong>
-                        ${player.isActive ? '<span class="activity-indicator">🟢</span>' : ''}
+                        ${player.isActive ? '<span class="activity-indicator" aria-label="Active player"></span>' : ''}
                     </td>
                     <td><strong>${player.bestScore}</strong></td>
                     <td>${player.timeFormatted}</td>
@@ -934,7 +949,7 @@ function renderLeaderboard(players, metadata) {
 
   container.innerHTML = `
         <div class="leaderboard-header">
-            <p>🎯 Showing top ${players.length} players | Last updated: ${new Date(metadata.lastUpdated).toLocaleTimeString()}</p>
+            <p>Showing top ${players.length} players | Last updated: ${new Date(metadata.lastUpdated).toLocaleTimeString()}</p>
         </div>
     `;
   container.appendChild(table);
@@ -954,33 +969,33 @@ function renderUserStats(statsData) {
   container.innerHTML = `
         <div class="user-stats-grid">
             <div class="stats-card">
-                <div class="stats-card-emoji">🎮</div>
+                <div class="stats-card-emoji">Games</div>
                 <div class="stats-card-value">${user.totalGames}</div>
                 <div class="stats-card-label">Games Played</div>
             </div>
             <div class="stats-card">
-                <div class="stats-card-emoji">🏆</div>
+                <div class="stats-card-emoji">Best</div>
                 <div class="stats-card-value">${user.bestScore}</div>
                 <div class="stats-card-label">Best Score</div>
             </div>
             <div class="stats-card">
-                <div class="stats-card-emoji">⚡</div>
+                <div class="stats-card-emoji">Speed</div>
                 <div class="stats-card-value">${statistics.fastestTime || 'N/A'}</div>
                 <div class="stats-card-label">Fastest Time</div>
             </div>
             <div class="stats-card">
-                <div class="stats-card-emoji">📊</div>
+                <div class="stats-card-emoji">Average</div>
                 <div class="stats-card-value">${statistics.averageScore.toFixed(1)}</div>
                 <div class="stats-card-label">Average Score</div>
             </div>
             <div class="stats-card">
-                <div class="stats-card-emoji">🎯</div>
+                <div class="stats-card-emoji">Rank</div>
                 <div class="stats-card-value">#${statistics.globalRank}</div>
                 <div class="stats-card-label">Global Rank</div>
             </div>
             <div class="stats-card">
-                <div class="stats-card-emoji">${performance.level.emoji}</div>
-                <div class="stats-card-value">${performance.level.level}</div>
+                <div class="stats-card-emoji">Level</div>
+                <div class="stats-card-value">${sanitizeUiText(performance.level.level)}</div>
                 <div class="stats-card-label">Performance Level</div>
             </div>
         </div>
@@ -989,7 +1004,7 @@ function renderUserStats(statsData) {
           gameHistory && gameHistory.length > 0
             ? `
             <div class="recent-games">
-                <h3>📈 Recent Games</h3>
+                <h3>Recent Games</h3>
                 <div class="games-list">
                     ${gameHistory
                       .slice(0, 5)
@@ -997,9 +1012,9 @@ function renderUserStats(statsData) {
                         (game) => `
                         <div class="game-history-item">
                             <div class="game-info">
-                                <span class="game-score">🎯 ${game.score}</span>
+                                <span class="game-score">Score ${game.score}</span>
                                 <span class="game-difficulty">${game.difficulty}</span>
-                                <span class="game-time">⏱️ ${game.duration}</span>
+                                <span class="game-time">Time ${game.duration}</span>
                             </div>
                             <div class="game-date">${new Date(game.completedAt).toLocaleDateString()}</div>
                         </div>
@@ -1013,20 +1028,20 @@ function renderUserStats(statsData) {
         }
         
         <div class="motivational-message">
-            <p>${statsData.message}</p>
+            <p>${sanitizeUiText(statsData.message)}</p>
         </div>
     `;
 }
 
 function playSound(type) {
   const sounds = {
-    flip: '🔊 Card flip sound',
-    success: '🎉 Success sound',
-    failure: '😅 Failure sound',
-    complete: '🏆 Game complete fanfare',
+    flip: 'Card flip sound',
+    success: 'Success sound',
+    failure: 'Failure sound',
+    complete: 'Game complete fanfare',
   };
 
-  console.log(sounds[type] || '🔊 Unknown sound');
+  console.log(sounds[type] || 'Unknown sound');
 }
 
 // ========================================
@@ -1034,16 +1049,16 @@ function playSound(type) {
 // ========================================
 
 window.addEventListener('error', (event) => {
-  console.error('❌ Global error:', event.error);
-  showNotification(
-    'Something went wrong! Please refresh the page. 🔄',
-    'error'
-  );
+  console.error('Global error:', event.error);
+  showNotification('Something went wrong. Please refresh the page.', 'error');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-  console.error('❌ Unhandled promise rejection:', event.reason);
-  showNotification('Connection error! Please check your internet. 🌐', 'error');
+  console.error('Unhandled promise rejection:', event.reason);
+  showNotification(
+    'Connection error. Please check your network and try again.',
+    'error'
+  );
 });
 
 // ========================================
@@ -1060,6 +1075,6 @@ window.gameDebug = {
   apiRequest,
 };
 
-console.log('🎮 Humor Memory Game Frontend loaded successfully!');
-console.log('🔧 Debug functions available at window.gameDebug');
-console.log(`🌐 API Base URL: ${API_BASE}`);
+console.log('MemFlip Fun Game frontend loaded successfully.');
+console.log('Debug functions available at window.gameDebug');
+console.log(`API Base URL: ${API_BASE}`);

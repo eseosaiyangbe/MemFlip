@@ -3,21 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🎮 Humor Memory Game - DevOps Learning Edition 😂</title>
+    <title>MemFlip Fun Game | Interactive Memory Challenge</title>
     <meta
       name="description"
-      content="A fun memory card game with funny emojis and jokes, Made for DevOps learning!"
+      content="MemFlip Fun Game is an interactive memory challenge with live scoring, leaderboard tracking, and portfolio-grade delivery."
     />
-    <meta name="author" content="DevOps Learning Team - Osomudeya Zudonu" />
+    <meta name="author" content="Internal Developer Platform Team" />
 
     <!-- Favicon -->
     <link
       rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='14' y='18' width='44' height='64' rx='10' fill='%236366f1'/%3E%3Crect x='42' y='24' width='44' height='64' rx='10' fill='%23818cf8' fill-opacity='0.94'/%3E%3Cpath d='M55 45h18' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M64 36v18' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='76' cy='43' r='4' fill='white'/%3E%3Ccircle cx='70' cy='54' r='4' fill='white'/%3E%3C/svg%3E"
     />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/main.css?v=20260517" />
+
+    <!-- Configuration Script - MUST RUN BEFORE ANY OTHER SCRIPTS -->
+    <script>
+      console.log('HTML configuration script starting...');
+
+      window.API_BASE_URL = '${API_BASE_URL}';
+      window.ENVIRONMENT = '${NODE_ENV}';
+      window.BUILD_TIMESTAMP = '${BUILD_TIMESTAMP}';
+
+      if (!window.API_BASE_URL || window.API_BASE_URL === '') {
+        console.warn('API_BASE_URL not set, using fallback /api');
+        window.API_BASE_URL = '/api';
+      }
+
+      window.CONFIG_READY = true;
+
+      console.log('Environment:', window.ENVIRONMENT);
+      console.log('API Base URL set to:', window.API_BASE_URL);
+      console.log('Build Timestamp:', window.BUILD_TIMESTAMP);
+      console.log('Current hostname:', window.location.hostname);
+      console.log('Current URL:', window.location.href);
+      console.log('Configuration loaded successfully');
+
+      Object.defineProperty(window, 'API_BASE_URL', {
+        value: window.API_BASE_URL,
+        writable: false,
+        configurable: false,
+      });
+    </script>
 
     <!-- Preload critical resources -->
     <link rel="preload" href="/scripts/game.js" as="script" />
@@ -26,9 +55,12 @@
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
       <div class="loading-content">
-        <div class="loading-spinner">🎮</div>
-        <h2>Loading Humor Memory Game...</h2>
-        <p>Preparing the funniest cards for you! 😂</p>
+        <div class="loading-mark" aria-hidden="true">
+          <span class="loading-mark-card loading-mark-card-back"></span>
+          <span class="loading-mark-card loading-mark-card-front"></span>
+        </div>
+        <h2>Loading MemFlip Fun Game...</h2>
+        <p>Preparing the next memory round and syncing the latest game state.</p>
         <div class="loading-bar">
           <div class="loading-progress"></div>
         </div>
@@ -39,21 +71,55 @@
     <div id="gameContainer" class="game-container" style="display: none">
       <!-- Header -->
       <header class="game-header">
-        <div class="header-content">
-          <h1 class="game-title">
-            <span class="title-emoji">🎮</span>
-            Humor Memory Game
-            <span class="title-emoji">😂</span>
-          </h1>
-          <p class="game-subtitle">A DevOps Learning Adventure!</p>
+        <div class="header-shell">
+          <div class="header-content">
+            <p class="product-kicker">Portfolio Game Workload</p>
+            <h1 class="game-title">MemFlip Fun Game</h1>
+            <p class="game-subtitle">
+              A memory challenge with live scoring, persistent stats, and a
+              production-style operating path.
+            </p>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="hero-console">
+              <div class="hero-console-screen">
+                <span class="hero-screen-card hero-screen-card-a"></span>
+                <span class="hero-screen-card hero-screen-card-b"></span>
+                <span class="hero-screen-card hero-screen-card-c"></span>
+              </div>
+              <div class="hero-console-left">
+                <span class="hero-dpad"></span>
+              </div>
+              <div class="hero-console-right">
+                <span class="hero-action hero-action-a"></span>
+                <span class="hero-action hero-action-b"></span>
+                <span class="hero-action hero-action-c"></span>
+                <span class="hero-action hero-action-d"></span>
+              </div>
+            </div>
+            <div class="hero-token hero-token-primary"></div>
+            <div class="hero-token hero-token-secondary"></div>
+          </div>
         </div>
 
         <!-- Navigation Tabs -->
         <nav class="game-nav">
-          <button class="nav-btn active" data-tab="game">🎯 Game</button>
-          <button class="nav-btn" data-tab="leaderboard">🏆 Leaderboard</button>
-          <button class="nav-btn" data-tab="stats">📊 My Stats</button>
-          <button class="nav-btn" data-tab="about">ℹ️ About</button>
+          <button class="nav-btn active" data-tab="game">
+            <span class="nav-icon nav-icon-game" aria-hidden="true"></span>
+            <span>Game</span>
+          </button>
+          <button class="nav-btn" data-tab="leaderboard">
+            <span class="nav-icon nav-icon-leaderboard" aria-hidden="true"></span>
+            <span>Leaderboard</span>
+          </button>
+          <button class="nav-btn" data-tab="stats">
+            <span class="nav-icon nav-icon-stats" aria-hidden="true"></span>
+            <span>My Stats</span>
+          </button>
+          <button class="nav-btn" data-tab="about">
+            <span class="nav-icon nav-icon-about" aria-hidden="true"></span>
+            <span>About</span>
+          </button>
         </nav>
       </header>
 
@@ -62,54 +128,59 @@
         <!-- User Setup -->
         <div id="userSetup" class="user-setup">
           <div class="setup-card">
-            <h2>🎪 Welcome to the Memory Circus!</h2>
-            <p>Enter your username to start the hilarious memory challenge!</p>
+            <div class="setup-card-header">
+              <p class="setup-kicker">Quick Start</p>
+              <h2>Start a new MemFlip session</h2>
+              <p>
+                Use the default player name or enter your own handle to begin a
+                timed memory challenge.
+              </p>
+            </div>
 
             <div class="input-group">
-              <label for="usernameInput">👤 Username:</label>
+              <label for="usernameInput">Username</label>
               <input
                 type="text"
                 id="usernameInput"
                 placeholder="Enter your username..."
                 maxlength="50"
                 autocomplete="username"
+                value="gameuser"
               />
             </div>
 
             <div class="input-group">
-              <label for="difficultySelect">🎯 Difficulty:</label>
+              <label for="difficultySelect">Difficulty</label>
               <select id="difficultySelect">
-                <option value="easy">😊 Easy (4x4 - 16 cards)</option>
-                <option value="medium">🤔 Medium (5x4 - 20 cards)</option>
-                <option value="hard">😤 Hard (6x4 - 24 cards)</option>
-                <option value="expert">🤯 Expert (6x5 - 30 cards)</option>
+                <option value="easy">Easy (4x4 - 16 cards)</option>
+                <option value="medium">Medium (5x4 - 20 cards)</option>
+                <option value="hard">Hard (6x4 - 24 cards)</option>
+                <option value="expert">Expert (6x5 - 30 cards)</option>
               </select>
             </div>
 
             <div class="input-group">
-              <label>🎨 Emoji Categories (optional):</label>
+              <label>Card Themes</label>
               <div class="category-selector">
                 <label class="category-option">
-                  <input type="checkbox" value="classic" /> 😂 Classic
+                  <input type="checkbox" value="classic" /> Classic
                 </label>
                 <label class="category-option">
-                  <input type="checkbox" value="food" /> 🍕 Food
+                  <input type="checkbox" value="food" /> Food
                 </label>
                 <label class="category-option">
-                  <input type="checkbox" value="space" /> 🚀 Space
+                  <input type="checkbox" value="space" /> Space
                 </label>
                 <label class="category-option">
-                  <input type="checkbox" value="fantasy" /> 🦄 Fantasy
+                  <input type="checkbox" value="fantasy" /> Fantasy
                 </label>
                 <label class="category-option">
-                  <input type="checkbox" value="tech" /> 🤖 Tech
+                  <input type="checkbox" value="tech" /> Tech
                 </label>
               </div>
             </div>
 
-            <button id="startGameBtn" class="btn btn-primary">
-              🚀 Start Game!
-            </button>
+            <button id="startGameBtn" class="btn btn-primary">Start Game</button>
           </div>
         </div>
 
@@ -118,23 +189,23 @@
           <!-- Game Info Bar -->
           <div class="game-info">
             <div class="info-item">
-              <span class="info-label">👤 Player:</span>
+              <span class="info-label">Player</span>
               <span id="playerName" class="info-value">-</span>
             </div>
             <div class="info-item">
-              <span class="info-label">🎯 Score:</span>
+              <span class="info-label">Score</span>
               <span id="gameScore" class="info-value">0</span>
             </div>
             <div class="info-item">
-              <span class="info-label">🔢 Moves:</span>
+              <span class="info-label">Moves</span>
               <span id="gameMoves" class="info-value">0</span>
             </div>
             <div class="info-item">
-              <span class="info-label">⏱️ Time:</span>
+              <span class="info-label">Time</span>
               <span id="gameTime" class="info-value">00:00</span>
             </div>
             <div class="info-item">
-              <span class="info-label">🃏 Pairs:</span>
+              <span class="info-label">Pairs</span>
               <span id="foundPairs" class="info-value">0</span>
               <span class="info-separator">/</span>
               <span id="totalPairs" class="info-value">8</span>
@@ -148,15 +219,15 @@
 
           <!-- Game Controls -->
           <div class="game-controls">
-            <button id="pauseBtn" class="btn btn-secondary">⏸️ Pause</button>
-            <button id="newGameBtn" class="btn btn-primary">🔄 New Game</button>
-            <button id="quitBtn" class="btn btn-danger">❌ Quit</button>
+            <button id="pauseBtn" class="btn btn-secondary">Pause</button>
+            <button id="newGameBtn" class="btn btn-primary">New Game</button>
+            <button id="quitBtn" class="btn btn-danger">Quit</button>
           </div>
 
           <!-- Message Display -->
           <div id="gameMessage" class="game-message" style="display: none">
             <div class="message-content">
-              <div class="message-emoji">🎉</div>
+              <div class="message-emoji">Status</div>
               <div class="message-text">Great match!</div>
             </div>
           </div>
@@ -166,35 +237,35 @@
         <div id="gameCompleteModal" class="modal" style="display: none">
           <div class="modal-content">
             <div class="modal-header">
-              <h2>🎉 Game Complete! 🏆</h2>
+              <h2>Game complete</h2>
               <button class="modal-close">&times;</button>
             </div>
             <div class="modal-body">
               <div class="completion-stats">
                 <div class="stat-item">
-                  <div class="stat-emoji">🎯</div>
+                  <div class="stat-emoji">Score</div>
                   <div class="stat-label">Final Score</div>
                   <div id="finalScore" class="stat-value">0</div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-emoji">⏱️</div>
+                  <div class="stat-emoji">Time</div>
                   <div class="stat-label">Time</div>
                   <div id="finalTime" class="stat-value">00:00</div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-emoji">🔢</div>
+                  <div class="stat-emoji">Moves</div>
                   <div class="stat-label">Moves</div>
                   <div id="finalMoves" class="stat-value">0</div>
                 </div>
                 <div class="stat-item">
-                  <div class="stat-emoji">🎪</div>
+                  <div class="stat-emoji">Accuracy</div>
                   <div class="stat-label">Accuracy</div>
                   <div id="finalAccuracy" class="stat-value">0%</div>
                 </div>
               </div>
 
               <div id="performanceRating" class="performance-rating">
-                <div class="rating-emoji">⭐</div>
+                <div class="rating-emoji">Performance</div>
                 <div class="rating-text">Great Job!</div>
               </div>
 
@@ -203,19 +274,15 @@
                 class="achievements-list"
                 style="display: none"
               >
-                <h3>🏆 Achievements Unlocked!</h3>
+                <h3>Achievements unlocked</h3>
                 <div class="achievements-container">
                   <!-- Achievements will be populated here -->
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-              <button id="playAgainBtn" class="btn btn-primary">
-                🎮 Play Again
-              </button>
-              <button id="viewLeaderboardBtn" class="btn btn-secondary">
-                🏆 Leaderboard
-              </button>
+              <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
+              <button id="viewLeaderboardBtn" class="btn btn-secondary">Leaderboard</button>
             </div>
           </div>
         </div>
@@ -224,21 +291,19 @@
       <!-- Leaderboard Tab -->
       <section id="leaderboardTab" class="tab-content">
         <div class="leaderboard-container">
-          <h2>🏆 Memory Champions Leaderboard</h2>
+          <h2>Leaderboard</h2>
 
           <div class="leaderboard-controls">
             <select id="leaderboardFilter">
-              <option value="all">🌟 All Time</option>
-              <option value="week">📅 This Week</option>
-              <option value="month">📆 This Month</option>
+              <option value="all">All Time</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
             </select>
-            <button id="refreshLeaderboard" class="btn btn-secondary">
-              🔄 Refresh
-            </button>
+            <button id="refreshLeaderboard" class="btn btn-secondary">Refresh</button>
           </div>
 
           <div id="leaderboardContent" class="leaderboard-content">
-            <div class="loading-spinner">Loading leaderboard... 📊</div>
+            <div class="loading-spinner loading-spinner-inline">Loading leaderboard...</div>
           </div>
         </div>
       </section>
@@ -246,15 +311,13 @@
       <!-- Stats Tab -->
       <section id="statsTab" class="tab-content">
         <div class="stats-container">
-          <h2>📊 Your Performance Statistics</h2>
+          <h2>Your performance statistics</h2>
 
           <div id="userStatsContent" class="user-stats-content">
             <div class="stats-placeholder">
-              <div class="placeholder-emoji">📈</div>
+              <div class="placeholder-emoji">Stats</div>
               <p>Play a game to see your stats here!</p>
-              <button class="btn btn-primary" onclick="switchTab('game')">
-                🎮 Start Playing
-              </button>
+              <button class="btn btn-primary" onclick="switchTab('game')">Start Playing</button>
             </div>
           </div>
         </div>
@@ -263,54 +326,55 @@
       <!-- About Tab -->
       <section id="aboutTab" class="tab-content">
         <div class="about-container">
-          <h2>ℹ️ About Humor Memory Game</h2>
+          <h2>About MemFlip Fun Game</h2>
 
           <div class="about-content">
             <div class="about-section">
-              <h3>🎮 What is this game?</h3>
+              <h3>What is this game?</h3>
               <p>
-                A fun memory card matching game featuring hilarious emojis and
-                jokes! Perfect for testing your memory skills while having a
-                good laugh.
+                MemFlip Fun Game is a lightweight memory challenge built as an
+                owned application workload inside the broader platform
+                portfolio. It combines quick rounds, persistent score tracking,
+                and a clean browser experience.
               </p>
             </div>
 
             <div class="about-section">
-              <h3>🎯 How to Play</h3>
+              <h3>How to play</h3>
               <ol>
-                <li>🎪 Enter your username and select difficulty</li>
-                <li>🃏 Click cards to flip them and find matching pairs</li>
-                <li>⚡ Match cards quickly for bonus points!</li>
-                <li>🏆 Complete all pairs to finish the game</li>
-                <li>📊 Check the leaderboard to see your ranking!</li>
+                <li>Confirm the player name and select your difficulty.</li>
+                <li>Flip cards and match pairs as efficiently as possible.</li>
+                <li>Reduce wasted moves to improve your final score.</li>
+                <li>Complete the board to record your session.</li>
+                <li>Review the leaderboard and your personal stats.</li>
               </ol>
             </div>
 
             <div class="about-section">
-              <h3>🔥 Scoring System</h3>
+              <h3>Scoring model</h3>
               <ul>
-                <li>🎯 Base points per match (varies by difficulty)</li>
-                <li>⚡ Speed bonus for quick matches</li>
-                <li>💎 Perfect game bonus (no wrong moves)</li>
-                <li>🔥 Streak bonus for consecutive matches</li>
+                <li>Base points are awarded for every successful match.</li>
+                <li>Faster sessions improve overall performance.</li>
+                <li>Accurate rounds help preserve score quality.</li>
+                <li>Difficulty influences the challenge and total card count.</li>
               </ul>
             </div>
 
             <div class="about-section">
-              <h3>🛠️ Built for DevOps Learning</h3>
+              <h3>Platform context</h3>
               <p>This application demonstrates:</p>
               <ul>
-                <li>🐳 Docker containerization</li>
-                <li>🗄️ PostgreSQL database integration</li>
-                <li>⚡ Redis caching</li>
-                <li>🌐 RESTful API design</li>
-                <li>☁️ Cloud-ready architecture</li>
-                <li>🔒 Security best practices</li>
+                <li>Frontend and backend service separation</li>
+                <li>PostgreSQL-backed persistence</li>
+                <li>Redis-assisted performance paths</li>
+                <li>REST API-driven gameplay state</li>
+                <li>Containerized delivery across local and k3s environments</li>
+                <li>Repeatable operational integration with the control plane</li>
               </ul>
             </div>
 
             <div class="about-section">
-              <h3>💻 Tech Stack</h3>
+              <h3>Technology stack</h3>
               <div class="tech-stack">
                 <span class="tech-badge">Node.js</span>
                 <span class="tech-badge">Express</span>
@@ -324,16 +388,12 @@
             </div>
 
             <div class="about-section">
-              <h3>🎉 Fun Facts</h3>
+              <h3>Why it matters</h3>
               <ul>
-                <li>😂 Over 30 different funny emojis to match!</li>
-                <li>
-                  🎭 Random success and failure messages for entertainment
-                </li>
-                <li>🏆 Real-time leaderboard with global rankings</li>
-                <li>📊 Detailed statistics and achievement system</li>
-                <li>⚡ Optimized with Redis caching for speed</li>
-                <li>🔒 Secure and scalable architecture</li>
+                <li>It provides a compact but realistic game workload for the platform.</li>
+                <li>It proves the repeatable onboarding pattern for smaller services.</li>
+                <li>It exposes live score, session, and leaderboard flows to observability.</li>
+                <li>It gives the portfolio a cleaner public-facing interactive experience.</li>
               </ul>
             </div>
           </div>
@@ -345,23 +405,23 @@
     <div id="errorModal" class="modal error-modal" style="display: none">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>😅 Oops! Something went wrong</h2>
+          <h2>Something went wrong</h2>
           <button class="modal-close">&times;</button>
         </div>
         <div class="modal-body">
           <div class="error-content">
-            <div class="error-emoji">🤔</div>
+            <div class="error-emoji">Error</div>
             <div id="errorMessage" class="error-message">
               An unexpected error occurred. Please try again!
             </div>
             <div class="error-suggestion">
-              💡 Try refreshing the page or check your internet connection.
+              Try refreshing the page or verify your connection before retrying.
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button id="retryBtn" class="btn btn-primary">🔄 Try Again</button>
-          <button class="modal-close btn btn-secondary">❌ Close</button>
+          <button id="retryBtn" class="btn btn-primary">Try Again</button>
+          <button class="modal-close btn btn-secondary">Close</button>
         </div>
       </div>
     </div>
@@ -369,7 +429,7 @@
     <!-- Notification Toast -->
     <div id="notification" class="notification" style="display: none">
       <div class="notification-content">
-        <div class="notification-emoji">ℹ️</div>
+        <div class="notification-emoji">Info</div>
         <div class="notification-message">Notification message</div>
       </div>
     </div>
@@ -378,16 +438,17 @@
     <footer class="game-footer">
       <div class="footer-content">
         <p>
-          🎮 Humor Memory Game v1.0 | Built with ❤️ for DevOps Learning |
+          MemFlip Fun Game v1.0 | Portfolio game workload |
           <a
-            href="https://github.com/your-org/humor-memory-game"
+            href="https://github.com/eseosaiyangbe/OpenSIS"
             target="_blank"
-            >📖 View on GitHub</a
+            rel="noreferrer"
+            >View on GitHub</a
           >
         </p>
         <p class="footer-subtitle">
-          🚀 Perfect for learning Docker, Kubernetes, CI/CD, and cloud
-          deployment!
+          Interactive browser gameplay backed by containerized services,
+          persistent state, and platform-grade operations.
         </p>
       </div>
     </footer>
@@ -402,9 +463,9 @@
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) =>
-            console.log('🔧 SW registered:', registration)
+            console.log('Service worker registered:', registration)
           )
-          .catch((error) => console.log('❌ SW registration failed:', error));
+          .catch((error) => console.log('Service worker registration failed:', error));
       }
     </script>
   </body>

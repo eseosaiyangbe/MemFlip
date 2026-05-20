@@ -100,6 +100,10 @@ fi
 echo "[memflip-k8s] Applying overlay"
 kubectl apply -k k8s/overlays/dev
 
+echo "[memflip-k8s] Restarting application deployments to pick up refreshed local images"
+kubectl rollout restart deployment/memflip-backend -n memflip-dev
+kubectl rollout restart deployment/memflip-frontend -n memflip-dev
+
 echo "[memflip-k8s] Waiting for workloads"
 kubectl rollout status deployment/memflip-backend -n memflip-dev --timeout=180s
 kubectl rollout status deployment/memflip-frontend -n memflip-dev --timeout=180s
