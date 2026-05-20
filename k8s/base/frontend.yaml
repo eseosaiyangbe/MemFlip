@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: memflip-frontend
+  annotations:
+    gitops.dev/validation-marker: "2026-05-20-memflip-frontend"
   labels:
     app.kubernetes.io/name: memflip-frontend
     app.kubernetes.io/component: web
