@@ -209,6 +209,24 @@ What they mean:
 
 Use `start` and `stop` for normal operations. Use `reset` only when you intentionally want a full rebuild of the MemFlip environment.
 
+### Phase 8 Backup And Restore Path
+
+MemFlip now also includes an owned Kubernetes backup and restore operator path for the `dev` slice.
+
+Use:
+
+```bash
+./scripts/k8s-backup-run.sh
+./scripts/k8s-backup-inspect.sh
+./scripts/k8s-backup-delete.sh --help
+./scripts/k8s-restore-run.sh --help
+./scripts/k8s-restore-verify.sh
+```
+
+See:
+
+- [docs/k8s/K8S_BACKUP_RESTORE.md](docs/k8s/K8S_BACKUP_RESTORE.md)
+
 ---
 
 ## **What You'll Build**

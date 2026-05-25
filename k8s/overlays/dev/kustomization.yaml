@@ -8,6 +8,8 @@ resources:
   - vault-serviceaccount.yaml
   - vault-secret-store.yaml
   - vault-external-secret.yaml
+  - state-backup.yaml
+  - supplemental-networkpolicy.yaml
   - ../../base
 
 images:

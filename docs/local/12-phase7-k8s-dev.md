@@ -164,6 +164,25 @@ cd MemFlip
 ./scripts/k8s-reset.sh --help
 ```
 
+## Phase 8 Backup And Restore
+
+MemFlip now also has an owned backup and restore contract for the `memflip-dev` Kubernetes slice.
+
+Use:
+
+```bash
+cd MemFlip
+./scripts/k8s-backup-run.sh
+./scripts/k8s-backup-inspect.sh
+./scripts/k8s-backup-delete.sh --help
+./scripts/k8s-restore-run.sh --help
+./scripts/k8s-restore-verify.sh
+```
+
+Details:
+
+- [../k8s/K8S_BACKUP_RESTORE.md](../k8s/K8S_BACKUP_RESTORE.md)
+
 ## Validate The Manifests
 
 Render the overlay:

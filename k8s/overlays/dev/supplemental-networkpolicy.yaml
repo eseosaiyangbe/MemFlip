@@ -1,0 +1,89 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: memflip-state-backup-policy
+  labels:
+    app.kubernetes.io/name: memflip-state-backup
+    app.kubernetes.io/component: network
+    app.kubernetes.io/part-of: internal-developer-platform
+    observability.dev/app: memflip
+spec:
+  podSelector:
+    matchLabels:
+      backup-role: state-backup
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: memflip-postgres
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: memflip-redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: memflip-postgres-backup-ingress
+  labels:
+    app.kubernetes.io/name: memflip-postgres
+    app.kubernetes.io/component: network
+    app.kubernetes.io/part-of: internal-developer-platform
+    observability.dev/app: memflip
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: memflip-postgres
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              backup-role: state-backup
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: memflip-redis-backup-ingress
+  labels:
+    app.kubernetes.io/name: memflip-redis
+    app.kubernetes.io/component: network
+    app.kubernetes.io/part-of: internal-developer-platform
+    observability.dev/app: memflip
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: memflip-redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              backup-role: state-backup
+      ports:
+        - protocol: TCP
+          port: 6379
