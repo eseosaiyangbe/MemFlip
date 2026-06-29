@@ -99,6 +99,7 @@ terraform apply
 - **Monitoring Only**: [Observability Guide](local/05-observability.md)
 - **Security Focus**: [Security Contexts Guide](security-contexts-guide.md)
 - **GitOps Workflow**: [GitOps Guide](local/06-gitops.md)
+- **Cloud CI/CD**: [cicd-cloud.md](cicd-cloud.md)
 - **Global Deployment**: [Global Production Guide](07-global.md)
 
 ---

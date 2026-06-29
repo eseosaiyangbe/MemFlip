@@ -165,7 +165,7 @@ This document describes the AWS infrastructure architecture for deploying the Hu
 
 #### GitHub Actions
 - **Runner**: Self-hosted on EC2
-- **Workflow**: Build → Push to ECR → Update GitOps → ArgoCD syncs
+- **Workflow**: Validate separately → Publish to ECR → Promote AWS GitOps overlay → ArgoCD syncs
 - **Security**: Image scanning with Trivy
 
 ### Cost Optimization
@@ -194,8 +194,8 @@ This document describes the AWS infrastructure architecture for deploying the Hu
 ### CI/CD Access
 1. GitHub Actions runner in private subnet
 2. Pulls code from GitHub
-3. Builds and pushes to ECR
-4. Updates GitOps repository
+3. Publishes immutable images to ECR
+4. Promotes the AWS GitOps overlay by Git change
 5. ArgoCD syncs to cluster
 
 ### Application Access
@@ -243,4 +243,3 @@ This document describes the AWS infrastructure architecture for deploying the Hu
 - VPC endpoints: Reduces NAT Gateway costs
 - Auto-scaling: Scales down during low usage
 - Reserved capacity: Additional savings for predictable workloads
-

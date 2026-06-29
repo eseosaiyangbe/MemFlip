@@ -94,10 +94,11 @@ Base → AWS Overlay → ECR images (123456789012.dkr.ecr.us-east-1.amazonaws.co
 
 ### CI/CD Updates
 
-The GitHub Actions workflow automatically:
-1. Builds images and pushes to ECR
-2. Updates `overlays/aws/kustomization.yaml` with new image tags
-3. ArgoCD syncs the changes
+The GitHub Actions workflow set now separates concerns:
+1. Validation runs independently
+2. AWS image publishing pushes immutable images to ECR
+3. AWS GitOps promotion updates `overlays/aws/kustomization.yaml`
+4. ArgoCD syncs the merged change
 
 ## Accessing GitHub Runner
 
@@ -213,4 +214,3 @@ For more details, see:
 - [GitHub Runner Access Guide](github-runner-access.md)
 - [Kustomize Overlays Guide](kustomize-overlays.md)
 - [AWS Deployment Guide](aws-deployment-guide.md)
-

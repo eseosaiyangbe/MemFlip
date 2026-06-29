@@ -108,17 +108,17 @@ patches:
 
 ## CI/CD Integration
 
-The GitHub Actions workflow automatically updates image tags:
+The GitHub Actions workflow set now separates image publishing from GitOps promotion:
 
-1. **Build images** → Push to ECR with tag `${GITHUB_SHA::7}`
-2. **Update GitOps** → Modify `overlays/aws/kustomization.yaml`:
+1. **Publish images** → Push immutable ECR tags like `${GITHUB_SHA::7}`
+2. **Promote AWS overlay** → Modify `overlays/aws/kustomization.yaml`:
    ```yaml
    images:
      - name: ghcr.io/osomudeya/devops-home-lab-2025-backend
        newName: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend
        newTag: abc1234  # Updated by CI/CD
    ```
-3. **ArgoCD syncs** → Automatically deploys new images
+3. **ArgoCD syncs** → Automatically deploys the promoted images after the Git change is merged
 
 ## Creating New Overlays
 
@@ -190,4 +190,3 @@ kubectl kustomize . | envsubst
 - ✅ **ArgoCD**: Uses appropriate overlay per environment
 
 This approach keeps your local configs intact while supporting multiple deployment targets!
-

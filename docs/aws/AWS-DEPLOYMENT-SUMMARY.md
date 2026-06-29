@@ -39,7 +39,8 @@ terraform/
 │       ├── opa-gatekeeper.yaml
 │       └── falco.yaml
 ├── .github/workflows/
-│   └── deploy-aws.yml         # CI/CD workflow for self-hosted runner
+│   ├── publish-aws-ecr.yml    # Publish immutable AWS images to ECR
+│   └── promote-aws-gitops.yml # Promote AWS GitOps overlay by pull request
 └── docs/
     ├── aws-deployment-guide.md
     └── aws-architecture.md
@@ -288,4 +289,3 @@ Before deploying to production:
 ---
 
 **Built with ❤️ for production-ready AWS deployments**
-

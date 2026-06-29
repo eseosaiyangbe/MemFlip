@@ -1,0 +1,120 @@
+name: Promote AWS GitOps Overlay
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Immutable ECR image tag to promote
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  AWS_REGION: us-east-1
+  IMAGE_NAME_BACKEND: devops-home-lab-backend
+  IMAGE_NAME_FRONTEND: devops-home-lab-frontend
+
+jobs:
+  promote:
+    name: Promote AWS overlay
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Resolve ECR registry
+        id: ecr
+        run: |
+          set -euo pipefail
+          echo "registry=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${AWS_REGION}.amazonaws.com" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Verify backend and frontend images exist
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+        run: |
+          set -euo pipefail
+          docker manifest inspect "${REGISTRY}/${IMAGE_NAME_BACKEND}:${IMAGE_TAG}" > /dev/null
+          docker manifest inspect "${REGISTRY}/${IMAGE_NAME_FRONTEND}:${IMAGE_TAG}" > /dev/null
+
+      - name: Update AWS overlay image tags
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+
+          path = Path("gitops-safe/overlays/aws/kustomization.yaml")
+          lines = path.read_text().splitlines()
+          image_tag = os.environ["IMAGE_TAG"]
+
+          targets = {
+              "ghcr.io/osomudeya/devops-home-lab-2025-backend": False,
+              "ghcr.io/osomudeya/devops-home-lab-2025-frontend": False,
+          }
+          current = None
+
+          for index, line in enumerate(lines):
+              stripped = line.strip()
+              if stripped.startswith("- name: "):
+                current = stripped.split(": ", 1)[1]
+                continue
+              if current in targets and stripped.startswith("newTag:"):
+                indent = line[:len(line) - len(line.lstrip())]
+                lines[index] = f"{indent}newTag: {image_tag}"
+                targets[current] = True
+                current = None
+
+          missing = [name for name, updated in targets.items() if not updated]
+          if missing:
+            raise SystemExit(f"Failed to update image tags for: {', '.join(missing)}")
+
+          path.write_text("\n".join(lines) + "\n")
+          PY
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.30.0
+
+      - name: Validate AWS overlay render
+        run: kubectl kustomize gitops-safe/overlays/aws > /dev/null
+
+      - name: Create promotion pull request
+        uses: peter-evans/create-pull-request@v8.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Promote AWS overlay to ${{ inputs.image_tag }}
+          title: Promote AWS overlay to ${{ inputs.image_tag }}
+          body: |
+            ## Promotion Summary
+
+            - immutable image tag: `${{ inputs.image_tag }}`
+            - promotion target: `gitops-safe/overlays/aws`
+            - cluster mutation: none
+            - release style: GitOps pull request
+
+            ## Validation Performed
+
+            - ECR backend image existence check
+            - ECR frontend image existence check
+            - `kubectl kustomize gitops-safe/overlays/aws`
+          branch: ci/promote-aws-${{ inputs.image_tag }}
+          delete-branch: true
+          base: main
+
