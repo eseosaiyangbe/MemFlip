@@ -13,7 +13,7 @@ gitops-safe/
 │   ├── frontend-deployment.yaml
 │   └── ...
 ├── overlays/
-│   ├── dev/                 # Local/Dev environment (uses GHCR)
+│   ├── dev/                 # Local/Dev environment (uses Docker Hub default images)
 │   │   └── kustomization.yaml
 │   └── aws/                 # AWS production (uses ECR)
 │       ├── kustomization.yaml
@@ -38,7 +38,7 @@ The `base/` directory contains the core Kubernetes manifests that are shared acr
 **Purpose**: Local development and testing
 
 **Changes**:
-- Uses GHCR images: `ghcr.io/osomudeya/devops-home-lab-2025-backend:latest`
+- Uses default Docker Hub image names: `devops-home-lab-2025-backend:latest`
 - No image pull secrets (public registry)
 - Minimal resource requirements
 
@@ -55,8 +55,8 @@ kubectl kustomize . | kubectl apply -f -
 **Purpose**: AWS EKS production deployment
 
 **Changes**:
-- **Image replacement**: GHCR → ECR
-  - `ghcr.io/osomudeya/devops-home-lab-2025-backend` → `${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend`
+- **Image replacement**: Docker Hub default path → ECR
+  - `devops-home-lab-2025-backend` → `${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend`
 - **Image pull secrets**: Adds ECR authentication
 - **Image pull policy**: Always (for production)
 
@@ -80,13 +80,13 @@ The AWS overlay uses Kustomize's `images` field to replace image names:
 
 ```yaml
 images:
-  - name: ghcr.io/osomudeya/devops-home-lab-2025-backend
+  - name: devops-home-lab-2025-backend
     newName: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend
     newTag: latest
 ```
 
 This means:
-- Base files keep GHCR images (unchanged)
+- Base files keep Docker Hub default image names
 - AWS overlay automatically replaces them with ECR images
 - CI/CD updates the tags automatically
 
@@ -114,7 +114,7 @@ The GitHub Actions workflow set now separates image publishing from GitOps promo
 2. **Promote AWS overlay** → Modify `overlays/aws/kustomization.yaml`:
    ```yaml
    images:
-     - name: ghcr.io/osomudeya/devops-home-lab-2025-backend
+     - name: devops-home-lab-2025-backend
        newName: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend
        newTag: abc1234  # Updated by CI/CD
    ```
@@ -138,7 +138,7 @@ To create a new environment overlay (e.g., staging):
    - ../../base
    
    images:
-     - name: ghcr.io/osomudeya/devops-home-lab-2025-backend
+     - name: devops-home-lab-2025-backend
        newName: ${STAGING_REGISTRY}/devops-home-lab-backend
        newTag: latest
    
@@ -184,7 +184,7 @@ kubectl kustomize . | envsubst
 ## Summary
 
 - ✅ **Base**: Shared manifests (never modify for env-specific changes)
-- ✅ **Dev Overlay**: Local development (GHCR images)
+- ✅ **Dev Overlay**: Local development (Docker Hub default images)
 - ✅ **AWS Overlay**: Production (ECR images, pull secrets)
 - ✅ **CI/CD**: Automatically updates image tags
 - ✅ **ArgoCD**: Uses appropriate overlay per environment

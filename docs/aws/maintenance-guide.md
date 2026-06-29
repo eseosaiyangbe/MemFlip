@@ -177,7 +177,7 @@ Complete guide for maintaining, updating, and operating the AWS-deployed infrast
    ```bash
    # Edit gitops-safe/overlays/aws/kustomization.yaml
    images:
-     - name: ghcr.io/osomudeya/devops-home-lab-2025-backend
+     - name: devops-home-lab-2025-backend
        newTag: v1.2.0  # Update tag
    ```
 
@@ -601,4 +601,3 @@ aws eks update-nodegroup-config \
 - [AWS Deployment Guide](./aws-deployment-guide.md) - Initial deployment
 - [Troubleshooting](../local/08-troubleshooting.md) - Common issues
 - [Monitoring Access Guide](../monitoring-access-guide.md) - Access monitoring tools
-

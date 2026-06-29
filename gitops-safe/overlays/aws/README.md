@@ -4,9 +4,9 @@ This overlay patches the base Kubernetes manifests for AWS EKS deployment.
 
 ## What This Overlay Does
 
-1. **Image Replacement**: Changes image registry from GHCR to ECR
-   - `ghcr.io/osomudeya/devops-home-lab-2025-backend` → `${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend`
-   - `ghcr.io/osomudeya/devops-home-lab-2025-frontend` → `${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-frontend`
+1. **Image Replacement**: Changes image registry from the default Docker Hub path to ECR
+   - `devops-home-lab-2025-backend` → `${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend`
+   - `devops-home-lab-2025-frontend` → `${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-frontend`
 
 2. **Image Pull Secrets**: Adds ECR registry secret for authentication
 
@@ -60,7 +60,7 @@ The CI/CD pipeline automatically updates image tags in this overlay:
 
 | Feature | Base/Dev | AWS Overlay |
 |---------|----------|-------------|
-| Image Registry | GHCR | ECR |
+| Image Registry | Docker Hub | ECR |
 | Image Pull Secret | None | ECR secret required |
 | Image Pull Policy | Always | Always |
 | Environment | Local/Dev | AWS Production |
@@ -70,4 +70,3 @@ The CI/CD pipeline automatically updates image tags in this overlay:
 - Base configurations remain unchanged
 - This overlay only patches what's needed for AWS
 - Local development continues to use base/dev overlays
-

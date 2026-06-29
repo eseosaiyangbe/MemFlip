@@ -25,7 +25,7 @@ terraform/
 gitops-safe/
 ├── base/                      # Base manifests (unchanged)
 └── overlays/
-    ├── dev/                   # Dev overlay (GHCR images)
+    ├── dev/                   # Dev overlay (Docker Hub default images)
     └── aws/                   # AWS overlay (ECR images)
 ```
 
@@ -46,7 +46,7 @@ terraform apply
 
 **Dev Environment Features**:
 - Smaller node groups (t3.small, 1-2 nodes)
-- Uses `gitops-safe/overlays/dev` (GHCR images)
+- Uses `gitops-safe/overlays/dev` (Docker Hub default images)
 - Optional GitHub runner
 - Lower cost (~$50-100/month)
 
@@ -76,15 +76,15 @@ terraform apply
 
 ### How It Works
 
-1. **Base** (`gitops-safe/base/`): Contains all Kubernetes manifests with GHCR images
-2. **Dev Overlay** (`gitops-safe/overlays/dev/`): Uses base as-is (GHCR images)
+1. **Base** (`gitops-safe/base/`): Contains all Kubernetes manifests with Docker Hub default image names
+2. **Dev Overlay** (`gitops-safe/overlays/dev/`): Uses base as-is (Docker Hub default images)
 3. **AWS Overlay** (`gitops-safe/overlays/aws/`): Patches images to use ECR
 
 ### Image Flow
 
 **Local/Dev**:
 ```
-Base → Dev Overlay → GHCR images (ghcr.io/...)
+Base → Dev Overlay → Docker Hub default images
 ```
 
 **AWS Production**:
@@ -159,7 +159,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 # Check which images are being used
 kubectl get deployment backend -n humor-game -o jsonpath='{.spec.template.spec.containers[0].image}'
 
-# Should show ECR images in prod, GHCR in dev
+# Should show ECR images in prod, Docker Hub-default images in dev
 ```
 
 ## Environment Differences
@@ -169,7 +169,7 @@ kubectl get deployment backend -n humor-game -o jsonpath='{.spec.template.spec.c
 | Node Size | t3.small | t3.medium |
 | Node Count | 1-2 nodes | 2-10 nodes |
 | GitHub Runner | Optional | Enabled |
-| Image Registry | GHCR | ECR |
+| Image Registry | Docker Hub | ECR |
 | ArgoCD Overlay | `overlays/dev` | `overlays/aws` |
 | Estimated Cost | $50-100/mo | $150-300/mo |
 

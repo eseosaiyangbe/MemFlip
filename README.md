@@ -85,7 +85,7 @@ By completing this tutorial, you'll master:
 - **Container orchestration** with Kubernetes (the same tech Netflix uses)
 - **Production monitoring** with Prometheus and Grafana dashboards
 - **Automated deployments** using GitOps principles
-- **Separated CI/CD lanes** for validation, image publishing, and GitOps promotion
+- **Separated CI/CD lanes** for validation, Docker Hub image publishing, environment-specific ECR publishing, and GitOps promotion
 - **Global scaling** with CDN and load balancing
 - **Real troubleshooting skills** that DevOps engineers use daily
 
@@ -351,7 +351,7 @@ See:
 - **[Cloudflare Setup](docs/cloudflare-tunnel-setup-guide.md)** - Global CDN configuration
 - **[Monitoring Troubleshooting](docs/monitoring-troubleshooting.md)** - Fix monitoring issues
 - **[GitOps Deep Dive](docs/argocd-deep-dive.md)** - Advanced GitOps patterns
-- **[Cloud CI/CD](docs/cicd-cloud.md)** - Validation, image publishing, and AWS GitOps promotion
+- **[Cloud CI/CD](docs/cicd-cloud.md)** - Validation, Docker Hub and ECR publishing, and AWS GitOps promotion
 - **[Global Deployment](docs/global-deployment-troubleshooting.md)** - Production scaling issues
 
 ### **Career Development**

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/osomudeya/devops-home-lab-2025-frontend:latest
+          image: devops-home-lab-2025-frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80

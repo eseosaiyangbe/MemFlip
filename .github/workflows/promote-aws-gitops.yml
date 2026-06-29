@@ -64,8 +64,8 @@ jobs:
           image_tag = os.environ["IMAGE_TAG"]
 
           targets = {
-              "ghcr.io/osomudeya/devops-home-lab-2025-backend": False,
-              "ghcr.io/osomudeya/devops-home-lab-2025-frontend": False,
+              "devops-home-lab-2025-backend": False,
+              "devops-home-lab-2025-frontend": False,
           }
           current = None
 
@@ -117,4 +117,3 @@ jobs:
           branch: ci/promote-aws-${{ inputs.image_tag }}
           delete-branch: true
           base: main
-

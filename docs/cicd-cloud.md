@@ -8,8 +8,8 @@ MemFlip now follows a cleaner cloud delivery contract:
    - frontend build
    - Kubernetes render and dry-run checks
 
-2. `publish-ghcr-images.yml`
-   - publishes backend and frontend images to GHCR
+2. `publish-dockerhub-images.yml`
+   - publishes backend and frontend images to Docker Hub
    - does not mutate GitOps manifests
 
 3. `publish-aws-ecr.yml`
@@ -30,7 +30,7 @@ MemFlip now follows a cleaner cloud delivery contract:
 
 ## Current promotion commands
 
-For GHCR-backed local or dev paths, use the GitOps manifests already tracked in the repository.
+For Docker Hub-backed local or dev paths, use the GitOps manifests already tracked in the repository.
 
 For AWS:
 

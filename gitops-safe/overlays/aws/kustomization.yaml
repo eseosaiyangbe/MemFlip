@@ -5,7 +5,7 @@ metadata:
   name: humor-game-aws
   namespace: humor-game
 
-# AWS-specific overlay - patches images to use ECR instead of GHCR
+# AWS-specific overlay - patches images to use ECR instead of the default Docker Hub path
 # This keeps local/base configs intact
 
 # Reference the base configuration
@@ -32,12 +32,12 @@ commonAnnotations:
 # Image patches - override base images with ECR images
 images:
   # Backend image - will be updated by CI/CD pipeline
-  - name: ghcr.io/osomudeya/devops-home-lab-2025-backend
+  - name: devops-home-lab-2025-backend
     newName: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-backend
     newTag: latest
   
   # Frontend image - will be updated by CI/CD pipeline
-  - name: ghcr.io/osomudeya/devops-home-lab-2025-frontend
+  - name: devops-home-lab-2025-frontend
     newName: ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devops-home-lab-frontend
     newTag: latest
 
