@@ -5,6 +5,7 @@ namespace: memflip-prod
 
 resources:
   - namespace.yaml
+  - prod-resource-quota.yaml
   - vault-serviceaccount.yaml
   - vault-secret-store.yaml
   - vault-external-secret.yaml
@@ -14,6 +15,7 @@ resources:
 
 labels:
   - pairs:
+      app.kubernetes.io/part-of: internal-developer-platform
       environment: prod
       secret-source: vault
     includeSelectors: false
