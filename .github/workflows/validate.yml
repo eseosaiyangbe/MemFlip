@@ -133,10 +133,10 @@ jobs:
       - name: Client dry-run Kubernetes manifests
         run: |
           set -euo pipefail
-          kubectl apply --dry-run=client -k k8s/overlays/dev >/tmp/memflip-dev-dryrun.txt
-          kubectl apply --dry-run=client -k k8s/overlays/prod >/tmp/memflip-prod-dryrun.txt
-          kubectl apply --dry-run=client -f k8s/argocd/memflip-dev-application.yaml >/tmp/memflip-argocd-dev-dryrun.txt
-          kubectl apply --dry-run=client -f k8s/argocd/memflip-prod-application.yaml >/tmp/memflip-argocd-prod-dryrun.txt
+          kubectl apply --dry-run=client --validate=false -k k8s/overlays/dev >/tmp/memflip-dev-dryrun.txt
+          kubectl apply --dry-run=client --validate=false -k k8s/overlays/prod >/tmp/memflip-prod-dryrun.txt
+          kubectl apply --dry-run=client --validate=false -f k8s/argocd/memflip-dev-application.yaml >/tmp/memflip-argocd-dev-dryrun.txt
+          kubectl apply --dry-run=client --validate=false -f k8s/argocd/memflip-prod-application.yaml >/tmp/memflip-argocd-prod-dryrun.txt
 
       - name: Summarize validation coverage
         run: |

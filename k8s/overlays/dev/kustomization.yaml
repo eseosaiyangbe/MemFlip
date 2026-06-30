@@ -20,9 +20,10 @@ images:
     newName: memflip-frontend
     newTag: dev
 
+patchesStrategicMerge:
+  - dev-resource-requests-patch.yaml
+  - dev-rollout-strategy-patch.yaml
 patches:
-  - path: dev-resource-requests-patch.yaml
-  - path: dev-rollout-strategy-patch.yaml
   - target:
       kind: ConfigMap
       name: memflip-app-config
