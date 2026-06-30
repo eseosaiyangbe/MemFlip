@@ -19,7 +19,7 @@ jobs:
     name: Publish Docker Hub images
     runs-on: ubuntu-latest
     env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
       - name: Check out repository
@@ -28,7 +28,7 @@ jobs:
       - name: Ensure Docker Hub credentials exist
         run: |
           set -euo pipefail
-          [ -n "${DOCKERHUB_USERNAME:-}" ] || { echo "DOCKERHUB_USERNAME secret is required"; exit 1; }
+          [ -n "${DOCKERHUB_USERNAME:-}" ] || { echo "DOCKERHUB_USERNAME variable is required"; exit 1; }
           [ -n "${DOCKERHUB_TOKEN:-}" ] || { echo "DOCKERHUB_TOKEN secret is required"; exit 1; }
 
       - name: Resolve immutable tag
@@ -43,7 +43,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push backend
@@ -52,8 +52,8 @@ jobs:
           context: ./backend
           push: true
           tags: |
-            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/devops-home-lab-2025-backend:${{ steps.meta.outputs.short_sha }}
-            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/devops-home-lab-2025-backend:latest
+            docker.io/${{ vars.DOCKERHUB_USERNAME }}/devops-home-lab-2025-backend:${{ steps.meta.outputs.short_sha }}
+            docker.io/${{ vars.DOCKERHUB_USERNAME }}/devops-home-lab-2025-backend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -63,8 +63,8 @@ jobs:
           context: ./frontend
           push: true
           tags: |
-            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/devops-home-lab-2025-frontend:${{ steps.meta.outputs.short_sha }}
-            docker.io/${{ secrets.DOCKERHUB_USERNAME }}/devops-home-lab-2025-frontend:latest
+            docker.io/${{ vars.DOCKERHUB_USERNAME }}/devops-home-lab-2025-frontend:${{ steps.meta.outputs.short_sha }}
+            docker.io/${{ vars.DOCKERHUB_USERNAME }}/devops-home-lab-2025-frontend:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

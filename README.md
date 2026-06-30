@@ -89,6 +89,25 @@ By completing this tutorial, you'll master:
 - **Global scaling** with CDN and load balancing
 - **Real troubleshooting skills** that DevOps engineers use daily
 
+## **Current Runtime Truth**
+
+The active Kubernetes runtime truth for this repository is `memflip-dev`.
+
+Current workflow posture:
+
+- `validate.yml`
+  Repository validation for workflows, scripts, application build paths, and Kubernetes render checks.
+- `publish-dockerhub-images.yml`
+  Docker Hub publishing for the active app images.
+- `smoke-dev-public.yml`
+  Scheduled and on-demand verification of the active public `dev` edge.
+- `publish-aws-ecr.yml`
+  AWS-specific image publishing for the separate cloud track.
+- `promote-aws-gitops.yml`
+  Manual promotion for the AWS GitOps overlay, not for the current local `dev` runtime.
+
+The local `prod` overlay remains a stronger Git contract while the active operating path stays `dev`-first.
+
 **Career Impact**: These skills are in high demand. DevOps engineers with Kubernetes experience earn 20-30% more than those without it.
 
 ## **Learning Path Overview**
