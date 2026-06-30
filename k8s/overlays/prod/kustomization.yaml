@@ -28,8 +28,9 @@ images:
     newName: memflip-frontend
     newTag: prod
 
+patchesStrategicMerge:
+  - prod-placement-patch.yaml
 patches:
-  - path: prod-placement-patch.yaml
   - target:
       kind: ConfigMap
       name: memflip-app-config
