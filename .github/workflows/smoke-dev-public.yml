@@ -20,9 +20,30 @@ jobs:
 
           ROOT_HEADERS="public-root-headers.txt"
           HEALTH_HEADERS="public-api-health-headers.txt"
+          HEALTH_BODY="public-api-health.json"
 
           ROOT_CODE=$(curl -k -sS -o /dev/null -D "$ROOT_HEADERS" -w '%{http_code}' "${PUBLIC_URL}/")
-          HEALTH_CODE=$(curl -k -sS -o /dev/null -D "$HEALTH_HEADERS" -w '%{http_code}' "${PUBLIC_URL}/api/health")
+          HEALTH_CODE=$(curl -k -sS -o "$HEALTH_BODY" -D "$HEALTH_HEADERS" -w '%{http_code}' "${PUBLIC_URL}/api/health")
+
+          python - <<'PY'
+          import json
+
+          with open("public-api-health.json", "r", encoding="utf-8") as handle:
+              payload = json.load(handle)
+
+          if payload.get("status") != "healthy":
+              raise SystemExit(f"Unexpected API health payload: {payload}")
+
+          services = payload.get("services") or {}
+          required = {
+              "database": "connected",
+              "redis": "connected",
+              "api": "running",
+          }
+          for key, expected in required.items():
+              if services.get(key) != expected:
+                  raise SystemExit(f"Unexpected service health for {key}: {payload}")
+          PY
 
           {
             echo "## Public dev smoke result"
@@ -30,6 +51,7 @@ jobs:
             printf -- "- url: %s\n" "$PUBLIC_URL"
             printf -- "- root status: %s\n" "$ROOT_CODE"
             printf -- "- api health status: %s\n" "$HEALTH_CODE"
+            printf -- "- api health contract: %s\n" "status=healthy, services.database=connected, services.redis=connected, services.api=running"
           } >> "$GITHUB_STEP_SUMMARY"
 
           if [ "$ROOT_CODE" != "200" ]; then
@@ -52,4 +74,5 @@ jobs:
           path: |
             public-root-headers.txt
             public-api-health-headers.txt
+            public-api-health.json
           retention-days: 14
