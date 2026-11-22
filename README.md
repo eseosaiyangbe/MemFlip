@@ -12,6 +12,12 @@
 
 ---
 
+## Platform Architecture
+
+![MemFlip platform architecture](docs/architecture/memflip-platform-architecture.png)
+
+*MemFlip's role in the workspace: this repo is the platform's reference onboarding workload. The application is deliberately small, because the design under review is the contract around it: what a workload provides (a health endpoint, metrics and logs in the agreed shape, deployment through the standard Kustomize path, no secrets of its own) and what the platform returns (Traefik ingress as the only public entry, network integration, Vault backed secret delivery through External Secrets Operator for dev and prod, presence in the shared observability stack and the platform inventory, and a failure drill with recovery validation). The live audit passed 34 of 34 checks (Phase 6 lab audit). The full design record, with the editable Mermaid source for this image, is in [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md). The tutorial material below is retained as the learning path archive for the application's origin.*
+
 ## **Start Here - Choose Your Path**
 
 > **First time here?** Don't know where to start? Use the guide below to find your perfect path.
